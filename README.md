@@ -1,65 +1,59 @@
-# Boxes and Diamonds
+# Boxes and Diamonds — 中文版
 
-![Book Cover](https://bd.openlogicproject.org/bd.png)
+本仓库是 [rzach/boxes-and-diamonds](https://github.com/rzach/boxes-and-diamonds) 的中文本地化，基于 [OpenLogic-Zh](https://github.com/maxchang3/OpenLogic-Zh) 组装。
 
-A textbook for modal and other intensional logics based on the Open
-Logic Project. It covers normal modal logics, relational semantics, 
-axiomatic and tableaux proof systems, intuitionistic logic, and 
-counterfactual conditionals.
+正文译文维护在 [OpenLogic-Zh](https://github.com/maxchang3/OpenLogic-Zh) 的 `locale/zh/` 中；本书专属的前言、导论与外壳文字维护在本仓库。
 
-This repository/directory only contains the LaTeX files and
-illustrations needed to typeset the textbook _Boxes and Diamonds_,
-which in turn requires the _[Open Logic
-Text](http://github.com/OpenLogicProject/OpenLogic/)_.
+**现阶段的中文译文全部由 AI 生成**，使用 DeepSeek Harness（DeepSeek V4 Flash 0731，思考强度 Max），并经过术语统一、TeX 结构检查和 PDF 审校；尚未进行大规模人工校验。
 
-You can [download the
-PDF](https://bd.openlogicproject.org/bd-screen.pdf)
-of the most recent version from the [Open Logic builds
-site](https://bd.openlogicproject.org/), or order a
-hardcopy from Amazon [[US](https://www.amazon.com/dp/1077321384)]
-[[CA](https://www.amazon.ca/dp/1077321384)]
-[[UK](https://www.amazon.co.uk/dp/1077321384)]
-[[DE](https://www.amazon.de/dp/1077321384)]. Note that the version on
-Amazon is usually not as current as the PDF.
+## 编译
 
-To install and compile:
+两个仓库必须位于同一父目录，目录名固定如下：
 
-- Download/install the _Open Logic Text_ from
-  [GitHub](http://github.com/OpenLogicProject/OpenLogic/), including [photos](https://github.com/OpenLogicProject/photos) and [line art portraits](https://github.com/OpenLogicProject/portraits).
-- Navigate to the subdirectory `courses/`
-- Put the content of [this repository](https://github.com/rzach/boxes-and-diamonds) into a subdirectory of it, say
-  `courses/boxes-and-diamonds`.
-- To get the graphics for the cover, navigate to the subdirectory `OpenLogic/assets` and put the content of `photos` into the subdirectory `photos`, and the content of `portraits` into the subdirectory `portraits`
-
-If you use `git`, this should do it:
+```text
+workspace/
+├── OpenLogic-Zh/
+└── boxes-and-diamonds-zh/
 ```
-# git clone https://github.com/OpenLogicProject/OpenLogic.git
-# cd OpenLogic/courses
-# git clone https://github.com/rzach/boxes-and-diamonds.git
-# cd ../assets
-# git clone https://github.com/OpenLogicProject/portraits.git
-# git clone https://github.com/OpenLogicProject/photos.git
+
+从本项目仓库克隆：
+
+```sh
+mkdir boxes-and-diamonds-workspace
+cd boxes-and-diamonds-workspace
+git clone https://github.com/maxchang3/OpenLogic-Zh.git OpenLogic-Zh
+git clone https://github.com/maxchang3/boxes-and-diamonds-zh.git boxes-and-diamonds-zh
+cd boxes-and-diamonds-zh
 ```
-Inside `courses/boxes-and-diamonds`, you can now compile:
+
+如果只做英文回归测试，可把第一个仓库换成 `git clone https://github.com/OpenLogicProject/OpenLogic.git OpenLogic-Zh`；它不包含中文 locale，因此不能构建中文版。
+
+## 本地构建
+
+需要安装主流 TeX 套件（TeX Live、MacTeX 或 MiKTeX，含 ctex），并确保 `latexmk`、`xelatex`、`pdflatex`、`curl` 和 `pdftotext` 等命令在 PATH 中。封面肖像由构建脚本按需下载并在本地缓存，不纳入 Git。
+
+```sh
+make zh         # 中文屏幕版：zh-bd-screen.pdf
+make zh-print   # 中文印刷内页：zh-bd-print.pdf
+make check      # 中文两版 + 英文回归测试
+make screen     # 仅本地测试用的英文屏幕版：bd-screen.pdf
+make print      # 仅本地测试用的英文印刷内页：bd-print.pdf
+make cover      # 上游英文印刷封面
+make clean
 ```
-# cd boxes-and-diamonds
-# pdflatex bd-screen
+
+`make zh` 和 `make zh-print` 使用 XeLaTeX，`make screen` 和 `make print` 使用 pdfLaTeX。日志中可能出现继承自上游的字体替代、overfull、PDF 资产和 hyperref 警告；TeX 错误、未定义 token、缺少输出或正文语言错误会使检查失败。
+
+## 同步上游
+
+```sh
+git remote add upstream https://github.com/rzach/boxes-and-diamonds.git
+git fetch upstream
+git log --oneline HEAD..upstream/master
 ```
-or just `# make` if you have `latexmk` installed.
 
-The file `bd-screen.tex` produces a color version of the text
-with smaller margins for screen reading. `bd-print` produces a
-black-and-white version designed for printing on Crown Quarto stock
-(without cover).
+## 上游项目说明
 
-Both versions load `bd.tex`, which contains the actual
-material. It in turn includes other files, most of them from the
-`OpenLogic` repository. So you won't get a complete book unless you
-download into the right subdirectory of and compile from there.
+_Boxes and Diamonds_ is a textbook for modal and other intensional logics based on the Open Logic Project. It covers normal modal logics, relational semantics, axiomatic and tableaux proof systems, intuitionistic logic, and counterfactual conditionals. The original project is maintained by [Richard Zach](https://richardzach.org/), and the latest English PDF is available from the [Open Logic builds site](https://bd.openlogicproject.org/).
 
-[![Creative Commons License](https://mirrors.creativecommons.org/presskit/buttons/88x31/png/by.png)](http://creativecommons.org/licenses/by/4.0/) 
-
-_[Boxes and Diamonds](https://github.com/rzach/boxes-and-diamonds)_ by [Richard
-Zach](http://richardzach.org/) is licensed under a [Creative
-Commons Attribution 4.0 International
-License](http://creativecommons.org/licenses/by/4.0/).
+The original edition and this translation are licensed under a [Creative Commons Attribution 4.0 International License](https://creativecommons.org/licenses/by/4.0/).
