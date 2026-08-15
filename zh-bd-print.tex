@@ -1,0 +1,27 @@
+% zh-bd-print.tex — 《盒子与钻石》中文版印刷内页驱动（依赖 ../OpenLogic-Zh）
+
+\documentclass[print]{../OpenLogic-Zh/sty/open-logic-book}
+
+\usepackage[fontset=fandol]{ctex}
+\usepackage{indentfirst}
+
+\newcommand{\olpath}{../OpenLogic-Zh}
+\def\oljobname{bd}
+\newcommand*{\ollangid}{zh}
+\newcommand*{\ollanguage}{chinese}
+
+\input{\olpath/sty/open-logic.sty}
+\input{bd-metadata}
+
+\renewcommand{\OLPbooktitlecover}{盒子与钻石}
+\renewcommand{\OLPbooktitle}{盒子与钻石}
+\renewcommand{\OLPbooksubtitlecover}{模态逻辑导论}
+\renewcommand{\OLPbooksubtitle}{模态逻辑导论}
+
+\input{\olpath/sty/open-logic-defer.sty}
+\input{includeonly}
+
+\begin{document}
+\raggedbottom
+\input{bd}
+\end{document}

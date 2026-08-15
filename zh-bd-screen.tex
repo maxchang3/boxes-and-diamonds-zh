@@ -1,0 +1,58 @@
+% zh-bd-screen.tex — 《盒子与钻石》中文版驱动（屏幕彩色版；依赖 ../OpenLogic-Zh；不手动折行）
+% 编译：latexmk -xelatex zh-bd-screen
+% 语言机制：\ollangid{zh} 使 \olimport 从 ../OpenLogic-Zh/locale/zh/content/ 取正文文件；\ollanguage{chinese} 激活 babel chinese + cleveref 中文名；术语表在 OpenLogic-Zh/locale/zh/open-logic-config.sty（自动括号原文）；环境名在 OpenLogic-Zh/locale/zh/open-logic-locale.sty。
+
+\documentclass[screen]{../OpenLogic-Zh/sty/open-logic-book}
+
+% 中文支持：ctex（必须在 babel 加载之前）
+\usepackage[fontset=fandol]{ctex}
+% 节首段也缩进（中文书刊惯例；LaTeX 默认 \section 负 beforeskip 触发 \@afterindentfalse 不缩进）
+\usepackage{indentfirst}
+
+\definecolor{OLPcolor}{RGB}{124,67,110}
+\definecolor{OLPdkcolor}{RGB}{173, 94, 153}
+\definecolor{OLPltcolor}{RGB}{239,189,227}
+
+\def\oljobname{bd}
+
+% \olpath 指向自包含仓库根
+\newcommand{\olpath}{../OpenLogic-Zh}
+
+% 语言声明：ollangid=zh 使 \olimport 从 locale/zh/content 取文件；
+% ollanguage=chinese 激活 babel/cleveref 中文名
+\newcommand*{\ollangid}{zh}
+\newcommand*{\ollanguage}{chinese}
+
+\input{\olpath/sty/open-logic.sty}
+
+\input{bd-metadata}
+
+% 中文书名只在本地化驱动中覆盖，避免修改共享的上游英文 metadata。
+\renewcommand{\OLPbooktitlecover}{盒子与钻石}
+\renewcommand{\OLPbooktitle}{盒子与钻石}
+\renewcommand{\OLPbooksubtitlecover}{模态逻辑导论}
+\renewcommand{\OLPbooksubtitle}{模态逻辑导论}
+
+\input{\olpath/sty/open-logic-defer.sty}
+
+\input{includeonly}
+
+\begin{document}
+\raggedbottom
+
+\OLPscreencover{\hfill\includegraphics[width=.29\textwidth]{assets/portraits/barcan-circle.pdf}
+\includegraphics[width=.29\textwidth]{assets/portraits/carnap-circle.pdf}\hfill{}
+
+\includegraphics[width=.29\textwidth]{assets/portraits/antonelli-circle.pdf}\hfill
+\includegraphics[width=.29\textwidth]{assets/portraits/lewis-circle.pdf}\hfill
+\includegraphics[width=.29\textwidth]{assets/portraits/prior-circle.pdf}
+
+\hfill\includegraphics[width=.29\textwidth]{assets/portraits/heyting-circle.pdf}
+\includegraphics[width=.29\textwidth]{assets/portraits/kripke-circle.pdf}\hfill{}
+
+\vspace{-.5cm}
+}
+
+\input{bd}
+
+\end{document}

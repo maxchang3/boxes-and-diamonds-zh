@@ -27,12 +27,17 @@
 \DeclareDocumentCommand \pAssign { m }{\applytofirst{\mathbi}{#1}}
 
 % I think I like ``countable'' and ``uncountable'' better?
+% [zh fork] 中文版跳过这些英文术语偏好（zh 术语表已有译名），否则会覆盖 OpenLogic-Zh/locale/zh/open-logic-config.sty 的中文定义
+
+\ifdefined\ollangid\else
 
 \settexttoken{enumerable}{countable}{countable}
 
 \settexttoken{nonenumerable}*{uncountable}{uncountable}
 
 \settexttoken{denumerable}{countably infinite}{countably infinite}
+
+\fi
 
 % Biconditional, verum are defined symbols
 

@@ -136,3 +136,12 @@ sympy-plots-for-*.tex/
 # html etc. files
 *.html
 *.css
+## Local additions (zh fork)
+.DS_Store
+*.xdv
+*.xmpi
+zh-toc*.txt
+cover-preview.png
+
+## B&D cover portraits are fetched during the build.
+assets/portraits/

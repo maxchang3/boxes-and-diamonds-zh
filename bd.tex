@@ -23,7 +23,11 @@
 
 \olimport*[normal-modal-logic]{normal-modal-logic}
 
-\part{Intuitionistic Logic}
+\ifdefined\ollangid
+  \part{直觉主义逻辑}
+\else
+  \part{Intuitionistic Logic}
+\fi
 
 \olimport*[intuitionistic-logic/introduction]{introduction}
 
@@ -37,7 +41,11 @@
 
 \olimport*[applied-modal-logic]{applied-modal-logic}
 
-\part{Appendices}
+\ifdefined\ollangid
+  \part{附录}
+\else
+  \part{Appendices}
+\fi
 
 \appendix
 
@@ -47,7 +55,11 @@
 \tagfalse{FOL}
 \olimport*[propositional-logic/syntax-and-semantics]{syntax-and-semantics}
 
-\chapter{Axiomatic \usetoken{P}{derivation}}
+\ifdefined\ollangid
+  \chapter{公理化推演}
+\else
+  \chapter{Axiomatic \usetoken{P}{derivation}}
+\fi
 
 \olimport*[first-order-logic/proof-systems]{introduction}
 \olimport*[first-order-logic/proof-systems]{axiomatic-deduction}
@@ -62,7 +74,11 @@
 
 \OLEndChapterHook
 
-\chapter{Tableaux}
+\ifdefined\ollangid
+  \chapter{表列}
+\else
+  \chapter{Tableaux}
+\fi
 
 \olimport*[first-order-logic/proof-systems]{tableaux}
 \olimport*[first-order-logic/tableaux]{rules-and-proofs}
@@ -76,7 +92,11 @@
 
 \OLEndChapterHook
 
-\chapter{The Completeness Theorem}
+\ifdefined\ollangid
+  \chapter{完全性定理}
+\else
+  \chapter{The Completeness Theorem}
+\fi
 
 \olimport*[first-order-logic/completeness]{introduction}
 \olimport*[first-order-logic/completeness]{outline}
