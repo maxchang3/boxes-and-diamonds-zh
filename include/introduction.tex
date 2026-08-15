@@ -11,9 +11,9 @@
 
 「必然」并不是解释 $\Box$ 算子的唯一方式，但它是标准的解释——「必然」与「可能」就是所谓的\emph{真性}模态。其他解释把 $\Box$ 读作「（某人~$A$）知道」，「某人 $A$ 相信」，「应当是那样的情况」，或「将总是真的」。这些分别是认知、信念、道义与时态模态。对 $\Box$ 的不同解释会使不同的!!{formula}成为逻辑真，并认定不同的推理为有效的。例如，一切必然的东西与一切被知道的东西都是真的，所以 $\Box !A \lif !A$ 在真性解释与认知解释下都是逻辑真。相比之下，并非一切被相信的、也并非一切应当如此的都会真的如此，所以 $\Box !A \lif !A$ 在信念或道义解释下不是逻辑真。
 
-为了处理模态算子的不同解释，语义由世界之间的一种关系——所谓的可及关系——加以扩展。于是 $\mSat{M}{\Box !A}[w]$ 当且仅当对所有从~$w$ 可及的世界~$v$ 有 $\mSat{M}{!A}[v]$。由此得到的语义非常灵活而强大，其基本思想可用来为基于其他内涵算子的逻辑提供语义解释。这样一种逻辑是直觉主义逻辑，一种基于 L. E. J. Brouwer 的构造性数学分支的构造性逻辑。直觉主义逻辑之所以在哲学上有趣，正是因为这个原因——它在数学的构造性说明中扮演着重要角色——不过在 20 世纪它也被有影响力的英国哲学家 Michael Dummett 提出为优于经典逻辑的逻辑。关系模型的另一个应用是作为虚拟条件句（即反事实条件句）的语义，这一进路由 Robert Stalnaker 与 David K. Lewis 开创。
+为了处理模态算子的不同解释，语义由世界之间的一种关系——所谓的可及关系——加以扩展。于是 $\mSat{M}{\Box !A}[w]$ 当且仅当对所有从~$w$ 可及的世界~$v$ 有 $\mSat{M}{!A}[v]$。由此得到的语义非常灵活而强大，其基本思想可用来为基于其他内涵算子的逻辑提供语义解释。这样一种逻辑是直觉主义逻辑，一种基于\zhFullName{L. E. J. Brouwer}{L. E. J. 布劳威尔}{布劳威尔}的构造性数学分支的构造性逻辑。直觉主义逻辑之所以在哲学上有趣，正是因为这个原因——它在数学的构造性说明中扮演着重要角色——不过在 20 世纪它也被有影响力的英国哲学家\zhFullName{Michael Dummett}{迈克尔·达米特}{达米特}提出为优于经典逻辑的逻辑。关系模型的另一个应用是作为虚拟条件句（即反事实条件句）的语义，这一进路由\zhFullName{Robert Stalnaker}{罗伯特·斯达内克}{斯达内克}与\zhFullName{David K. Lewis}{大卫·刘易斯}{刘易斯}开创。
 
-本书是内涵逻辑的句法、语义与证明论导论。它只处理命题逻辑，虽然未来的版本也将处理谓词逻辑。全书分为三个部分：第一部分处理正规模态逻辑。这些逻辑具有算子 $\Box$ 与~$\Diamond$。我们讨论它们的句法、关系模型以及基于它们的语义概念（如有效性与后承），以及!!{derivation}系统（既包括公理系统也包括表列）。我们建立这些逻辑的一些基本结果，如所考察的!!{derivation}系统的可靠性与完全性，并讨论诸如过滤之类的一些模型论构造。第二部分处理直觉主义逻辑。这里我们讨论自然演绎与公理化!!{derivation}、关系语义与拓扑语义，以及这些!!{derivation}系统的可靠性与完全性。第三部分处理反事实条件句的 Lewis-Stalnaker 语义。附录讨论集合论与关系理论中一些对关系语义至关重要的思想与结果，并回顾经典命题逻辑的句法、语义与!!{derivation}理论。
+本书是内涵逻辑的句法、语义与证明论导论。它只处理命题逻辑，虽然未来的版本也将处理谓词逻辑。全书分为三个部分：第一部分处理正规模态逻辑。这些逻辑具有算子 $\Box$ 与~$\Diamond$。我们讨论它们的句法、关系模型以及基于它们的语义概念（如有效性与后承），以及!!{derivation}系统（既包括公理系统也包括表列）。我们建立这些逻辑的一些基本结果，如所考察的!!{derivation}系统的可靠性与完全性，并讨论诸如过滤之类的一些模型论构造。第二部分处理直觉主义逻辑。这里我们讨论自然演绎与公理化!!{derivation}、关系语义与拓扑语义，以及这些!!{derivation}系统的可靠性与完全性。第三部分处理反事实条件句的\zhFirst{Lewis-Stalnaker}{刘易斯–斯达内克}语义。附录讨论集合论与关系理论中一些对关系语义至关重要的思想与结果，并回顾经典命题逻辑的句法、语义与!!{derivation}理论。
 \else
 \chapter{Introduction}
 
@@ -74,12 +74,12 @@ $\mSat{M}{!A}[v]$ for all worlds~$v$ which are accessible from~$w$.
 The resulting semantics is very versatile and powerful, and the basic
 idea can be used to provide semantic interpretations for logics based
 on other intensional operators. One such logic is intuitionistic
-logic, a constructive logic based on L. E. J. Brouwer's branch of
+logic, a constructive logic based on \zhFullName{L. E. J. Brouwer}{L. E. J. 布劳威尔}{布劳威尔}'s branch of
 constructive mathematics. Intuitionistic logic is philosophically
 interesting for this reason---it plays an important role in
 constructive accounts of mathematics---but was also proposed as a logic
 superior to classical logic by the influential English philosopher
-Michael Dummett in the 20th century. Another application of relational
+\zhFullName{Michael Dummett}{迈克尔·达米特}{达米特} in the 20th century. Another application of relational
 models is as a semantics for subjunctive, or counterfactual,
 conditionals, an approach pioneered by Robert Stalnaker and David K.
 Lewis.
