@@ -1,0 +1,86 @@
+name: Build Boxes and Diamonds
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      olp_repository:
+        description: 'Repository containing the matching OpenLogic-Zh fork (OWNER/REPO)'
+        required: false
+        type: string
+      olp_ref:
+        description: 'Branch or tag of the OpenLogic-Zh fork'
+        required: false
+        default: main
+        type: string
+
+env:
+  OLP_REPOSITORY: ${{ inputs.olp_repository || vars.OLP_REPOSITORY || format('{0}/OpenLogic-Zh', github.repository_owner) }}
+  OLP_REF: ${{ inputs.olp_ref || vars.OLP_REF || 'main' }}
+
+jobs:
+  build-english:
+    name: Build English comparison
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out B&D driver
+        uses: actions/checkout@v4
+        with:
+          path: boxes-and-diamonds-zh
+      - name: Check out matching Open Logic fork
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.OLP_REPOSITORY }}
+          ref: ${{ env.OLP_REF }}
+          path: OpenLogic-Zh
+      - name: Fetch cover portraits
+        working-directory: boxes-and-diamonds-zh
+        run: sh scripts/fetch-portraits.sh
+      - name: Compile English screen PDF
+        uses: xu-cheng/latex-action@v4
+        with:
+          root_file: bd-screen.tex
+          working_directory: boxes-and-diamonds-zh
+          args: -pdf -interaction=nonstopmode -halt-on-error
+      - name: Check English output
+        working-directory: boxes-and-diamonds-zh
+        run: sh scripts/check-build.sh bd-screen
+
+  build-chinese:
+    name: Build Chinese release PDFs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out B&D driver
+        uses: actions/checkout@v4
+        with:
+          path: boxes-and-diamonds-zh
+      - name: Check out matching OpenLogic-Zh fork
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.OLP_REPOSITORY }}
+          ref: ${{ env.OLP_REF }}
+          path: OpenLogic-Zh
+      - name: Fetch cover portraits
+        working-directory: boxes-and-diamonds-zh
+        run: sh scripts/fetch-portraits.sh
+      - name: Compile Chinese PDFs
+        uses: xu-cheng/latex-action@v4
+        with:
+          root_file: |
+            zh-bd-screen.tex
+            zh-bd-print.tex
+          working_directory: boxes-and-diamonds-zh
+          args: -xelatex -interaction=nonstopmode -halt-on-error
+      - name: Check Chinese output
+        working-directory: boxes-and-diamonds-zh
+        run: |
+          sh scripts/check-build.sh zh-bd-screen
+          sh scripts/check-build.sh zh-bd-print
+      - name: Upload Chinese PDFs
+        uses: actions/upload-artifact@v4
+        with:
+          name: boxes-and-diamonds-zh
+          path: |
+            boxes-and-diamonds-zh/zh-bd-screen.pdf
+            boxes-and-diamonds-zh/zh-bd-print.pdf
