@@ -84,3 +84,39 @@ jobs:
           path: |
             boxes-and-diamonds-zh/zh-bd-screen.pdf
             boxes-and-diamonds-zh/zh-bd-print.pdf
+
+  release-please:
+    name: Prepare or publish release
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    needs:
+      - build-english
+      - build-chinese
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: write
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Run release-please
+        id: release
+        uses: googleapis/release-please-action@v4
+        with:
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN || github.token }}
+          release-type: simple
+          target-branch: master
+      - name: Download Chinese PDFs
+        if: ${{ steps.release.outputs.release_created }}
+        uses: actions/download-artifact@v4
+        with:
+          name: boxes-and-diamonds-zh
+          path: release-assets
+      - name: Attach Chinese PDFs to release
+        if: ${{ steps.release.outputs.release_created }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          gh release upload "${{ steps.release.outputs.tag_name }}"
+          release-assets/zh-bd-screen.pdf
+          release-assets/zh-bd-print.pdf
+          --clobber

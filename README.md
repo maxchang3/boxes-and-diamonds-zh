@@ -44,6 +44,12 @@ make clean
 
 `make zh` 和 `make zh-print` 使用 XeLaTeX，`make screen` 和 `make print` 使用 pdfLaTeX。日志中可能出现继承自上游的字体替代、overfull、PDF 资产和 hyperref 警告；TeX 错误、未定义 token、缺少输出或正文语言错误会使检查失败。
 
+## 发布
+
+项目使用 release-please 根据 Conventional Commits 维护版本、更新 `CHANGELOG.md` 并创建 Release PR。合并 Release PR 后，GitHub Actions 会在中英文构建全部通过时创建 GitHub Release，并只附加 `zh-bd-screen.pdf` 与 `zh-bd-print.pdf`。
+
+工作流默认使用 `GITHUB_TOKEN`；若希望 release-please 创建或更新的 PR 自动触发其他工作流，请配置具有仓库内容与 Pull Request 写权限的 `RELEASE_PLEASE_TOKEN` secret，并在仓库 Actions 设置中允许 GitHub Actions 创建 Pull Request。
+
 ## 同步上游
 
 ```sh
