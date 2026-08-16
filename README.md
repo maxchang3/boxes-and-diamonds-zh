@@ -1,10 +1,13 @@
 # Boxes and Diamonds — 中文版
 
+> [!WARNING]  
+> 
+> **现阶段的译文全部由 AI 生成**，使用 DeepSeek Harness（DeepSeek V4 Flash 0731，思考强度 Max），并经过术语统一、TeX 结构检查和 PDF 审校；尚未进行大规模人工校验。
+>
+> 正文译文维护在 [OpenLogic-Zh](https://github.com/maxchang3/OpenLogic-Zh) 的 `locale/zh/` 中；本书专属的前言、导论与外壳文字维护在本仓库。
+
 本仓库是 [rzach/boxes-and-diamonds](https://github.com/rzach/boxes-and-diamonds) 的中文本地化，基于 [OpenLogic-Zh](https://github.com/maxchang3/OpenLogic-Zh) 组装。
 
-正文译文维护在 [OpenLogic-Zh](https://github.com/maxchang3/OpenLogic-Zh) 的 `locale/zh/` 中；本书专属的前言、导论与外壳文字维护在本仓库。
-
-**现阶段的中文译文全部由 AI 生成**，使用 DeepSeek Harness（DeepSeek V4 Flash 0731，思考强度 Max），并经过术语统一、TeX 结构检查和 PDF 审校；尚未进行大规模人工校验。
 
 ## 编译
 
