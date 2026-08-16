@@ -65,6 +65,7 @@ jobs:
         uses: actions/checkout@v7
         with:
           path: boxes-and-diamonds-zh
+          fetch-depth: 0
       - name: Check out matching Open Logic fork
         uses: actions/checkout@v7
         with:
@@ -76,6 +77,9 @@ jobs:
         run: sh scripts/fetch-portraits.sh
       - name: Install poppler-utils for PDF text check
         run: sudo apt-get update && sudo apt-get install -y poppler-utils
+      - name: Fetch tags for version stamp
+        working-directory: boxes-and-diamonds-zh
+        run: git fetch --tags --force origin
       - name: Stamp OpenLogic-Zh revision into olprevision.tex
         working-directory: boxes-and-diamonds-zh
         run: sh scripts/stamp-olprevision.sh ../OpenLogic-Zh
@@ -100,6 +104,7 @@ jobs:
         uses: actions/checkout@v7
         with:
           path: boxes-and-diamonds-zh
+          fetch-depth: 0
       - name: Check out matching OpenLogic-Zh fork
         uses: actions/checkout@v7
         with:
@@ -111,6 +116,9 @@ jobs:
         run: sh scripts/fetch-portraits.sh
       - name: Install poppler-utils for PDF text check
         run: sudo apt-get update && sudo apt-get install -y poppler-utils
+      - name: Fetch tags for version stamp
+        working-directory: boxes-and-diamonds-zh
+        run: git fetch --tags --force origin
       - name: Stamp OpenLogic-Zh revision into olprevision.tex
         working-directory: boxes-and-diamonds-zh
         run: sh scripts/stamp-olprevision.sh ../OpenLogic-Zh
