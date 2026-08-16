@@ -134,6 +134,25 @@ jobs:
           path: |
             boxes-and-diamonds-zh/zh-bd-screen.pdf
             boxes-and-diamonds-zh/zh-bd-print.pdf
+      # 翻译同步提交：OLP 更新触发的 dispatch 构建成功后，把 stamp 过的
+      # olprevision.tex（记录实际 OLP 修订）作为 fix: 提交推回 master，
+      # 让 release-please 自动开出下一个版本（0.0.x）的 release PR。
+      # 若 OLP 无新修订（diff 为空）则跳过，避免循环触发。
+      - name: Commit synced translation revision
+        if: github.event_name == 'repository_dispatch'
+        working-directory: boxes-and-diamonds-zh
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet olprevision.tex; then
+            echo "olprevision.tex unchanged; no sync commit needed"
+            exit 0
+          fi
+          rev=$(sed -n 's/.*{\([0-9a-f]*\) (.*/\1/p' olprevision.tex)
+          git add olprevision.tex
+          git commit -m "fix: sync translation with openlogic-zh@$rev"
+          git pull --rebase origin master
+          git push origin master
 
   release-please:
     name: Prepare or publish release
