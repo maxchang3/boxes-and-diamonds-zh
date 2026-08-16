@@ -71,6 +71,9 @@ jobs:
         run: sh scripts/fetch-portraits.sh
       - name: Install poppler-utils for PDF text check
         run: sudo apt-get update && sudo apt-get install -y poppler-utils
+      - name: Stamp OpenLogic-Zh revision into olprevision.tex
+        working-directory: boxes-and-diamonds-zh
+        run: sh scripts/stamp-olprevision.sh ../OpenLogic-Zh
       - name: Compile English screen PDF
         uses: xu-cheng/latex-action@4.1.0
         with:
@@ -103,6 +106,9 @@ jobs:
         run: sh scripts/fetch-portraits.sh
       - name: Install poppler-utils for PDF text check
         run: sudo apt-get update && sudo apt-get install -y poppler-utils
+      - name: Stamp OpenLogic-Zh revision into olprevision.tex
+        working-directory: boxes-and-diamonds-zh
+        run: sh scripts/stamp-olprevision.sh ../OpenLogic-Zh
       - name: Compile Chinese PDFs
         uses: xu-cheng/latex-action@4.1.0
         with:
@@ -138,12 +144,14 @@ jobs:
       issues: write
       pull-requests: write
     steps:
+      - uses: actions/checkout@v7
       - name: Run release-please
         id: release
         uses: googleapis/release-please-action@v5
         with:
           token: ${{ secrets.RELEASE_PLEASE_TOKEN || github.token }}
           release-type: simple
+          initial-version: 0.0.1
           target-branch: ${{ github.event.repository.default_branch }}
       - name: Download Chinese PDFs
         if: ${{ steps.release.outputs.release_created }}

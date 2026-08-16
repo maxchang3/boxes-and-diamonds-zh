@@ -13,6 +13,12 @@ all: screen print cover
 zh: zh-bd-screen.pdf
 	@sh scripts/check-build.sh zh-bd-screen
 
+# 每次构建前把实际 OpenLogic-Zh 修订写入 olprevision.tex（PDF 扉页可见）
+zh-bd-screen.pdf zh-bd-print.pdf bd-screen.pdf: | olprevision
+
+olprevision: FORCE
+	@sh scripts/stamp-olprevision.sh
+
 zh-print: zh-bd-print.pdf
 	@sh scripts/check-build.sh zh-bd-print
 
