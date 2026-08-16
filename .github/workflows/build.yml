@@ -4,6 +4,8 @@ on:
   push:
   pull_request:
   workflow_dispatch:
+  repository_dispatch:
+    types: [olp-updated]
     inputs:
       olp_repository:
         description: 'Repository containing the matching OpenLogic-Zh fork (OWNER/REPO)'
@@ -34,8 +36,11 @@ jobs:
       shared: ${{ steps.filter.outputs.shared }}
     steps:
       - uses: actions/checkout@v7
+      # repository_dispatch（openlogic-zh 翻译更新触发）只重建中文 PDF，
+      # 不检测共享层变化，也就跳过英文回归构建。
       - uses: dorny/paths-filter@v4
         id: filter
+        if: github.event_name != 'repository_dispatch'
         with:
           filters: |
             shared:
