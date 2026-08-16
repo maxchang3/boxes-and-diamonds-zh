@@ -156,8 +156,11 @@ jobs:
 
   release-please:
     name: Prepare or publish release
+    # push（发版或常规提交）与 repository_dispatch（OLP 翻译同步，
+    # sync commit 已在 build-chinese 里推回 master）都触发。
+    # 无新提交时 release-please 自动跳过。
     if: >-
-      github.event_name == 'push' &&
+      (github.event_name == 'push' || github.event_name == 'repository_dispatch') &&
       github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
     needs:
       - build-chinese
@@ -169,6 +172,11 @@ jobs:
       pull-requests: write
     steps:
       - uses: actions/checkout@v7
+      # dispatch 时 sync commit 刚由 build-chinese 推回 master，
+      # 重新拉取以确保 release-please 看到最新提交
+      - name: Fetch latest master
+        if: github.event_name == 'repository_dispatch'
+        run: git fetch origin master && git reset --hard origin/master
       - name: Run release-please
         id: release
         uses: googleapis/release-please-action@v5
