@@ -15,21 +15,53 @@ on:
         default: main
         type: string
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   OLP_REPOSITORY: ${{ inputs.olp_repository || vars.OLP_REPOSITORY || format('{0}/OpenLogic-Zh', github.repository_owner) }}
   OLP_REF: ${{ inputs.olp_ref || vars.OLP_REF || 'main' }}
 
+# 只有默认分支的 push 才需要构建；PR 与手动触发总是构建。
+# workflow 级 on.push 无法写分支表达式（$default-branch 有已知 bug），
+# 故在 job 级用 default_branch 判断。
 jobs:
+  changes:
+    name: Detect shared-layer changes
+    runs-on: ubuntu-latest
+    outputs:
+      shared: ${{ steps.filter.outputs.shared }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dorny/paths-filter@v4
+        id: filter
+        with:
+          filters: |
+            shared:
+              - 'include/**'
+              - 'bd.tex'
+              - 'bd-*.tex'
+              - 'bd-*.sty'
+              - 'olprevision.tex'
+              - '.github/**'
+              - 'scripts/**'
+
   build-english:
     name: Build English comparison
+    needs: changes
+    if: >-
+      needs.changes.outputs.shared == 'true' &&
+      (github.event_name != 'push' ||
+       github.ref == format('refs/heads/{0}', github.event.repository.default_branch))
     runs-on: ubuntu-latest
     steps:
       - name: Check out B&D driver
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           path: boxes-and-diamonds-zh
       - name: Check out matching Open Logic fork
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: ${{ env.OLP_REPOSITORY }}
           ref: ${{ env.OLP_REF }}
@@ -40,7 +72,7 @@ jobs:
       - name: Install poppler-utils for PDF text check
         run: sudo apt-get update && sudo apt-get install -y poppler-utils
       - name: Compile English screen PDF
-        uses: xu-cheng/latex-action@v4
+        uses: xu-cheng/latex-action@4.1.0
         with:
           root_file: bd-screen.tex
           working_directory: boxes-and-diamonds-zh
@@ -51,14 +83,17 @@ jobs:
 
   build-chinese:
     name: Build Chinese release PDFs
+    if: >-
+      github.event_name != 'push' ||
+      github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
     runs-on: ubuntu-latest
     steps:
       - name: Check out B&D driver
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           path: boxes-and-diamonds-zh
       - name: Check out matching OpenLogic-Zh fork
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: ${{ env.OLP_REPOSITORY }}
           ref: ${{ env.OLP_REF }}
@@ -69,7 +104,7 @@ jobs:
       - name: Install poppler-utils for PDF text check
         run: sudo apt-get update && sudo apt-get install -y poppler-utils
       - name: Compile Chinese PDFs
-        uses: xu-cheng/latex-action@v4
+        uses: xu-cheng/latex-action@4.1.0
         with:
           root_file: |
             zh-bd-screen.tex
@@ -82,7 +117,7 @@ jobs:
           sh scripts/check-build.sh zh-bd-screen
           sh scripts/check-build.sh zh-bd-print
       - name: Upload Chinese PDFs
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: boxes-and-diamonds-zh
           path: |
@@ -91,9 +126,10 @@ jobs:
 
   release-please:
     name: Prepare or publish release
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    if: >-
+      github.event_name == 'push' &&
+      github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
     needs:
-      - build-english
       - build-chinese
     runs-on: ubuntu-latest
     permissions:
@@ -104,14 +140,14 @@ jobs:
     steps:
       - name: Run release-please
         id: release
-        uses: googleapis/release-please-action@v4
+        uses: googleapis/release-please-action@v5
         with:
           token: ${{ secrets.RELEASE_PLEASE_TOKEN || github.token }}
           release-type: simple
-          target-branch: master
+          target-branch: ${{ github.event.repository.default_branch }}
       - name: Download Chinese PDFs
         if: ${{ steps.release.outputs.release_created }}
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: boxes-and-diamonds-zh
           path: release-assets
