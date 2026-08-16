@@ -65,7 +65,7 @@ jobs:
         uses: actions/checkout@v7
         with:
           path: boxes-and-diamonds-zh
-          fetch-depth: 0
+          fetch-depth: 1
       - name: Check out matching Open Logic fork
         uses: actions/checkout@v7
         with:
@@ -77,9 +77,6 @@ jobs:
         run: sh scripts/fetch-portraits.sh
       - name: Install poppler-utils for PDF text check
         run: sudo apt-get update && sudo apt-get install -y poppler-utils
-      - name: Fetch tags for version stamp
-        working-directory: boxes-and-diamonds-zh
-        run: git fetch --tags --force origin
       - name: Stamp OpenLogic-Zh revision into olprevision.tex
         working-directory: boxes-and-diamonds-zh
         run: sh scripts/stamp-olprevision.sh ../OpenLogic-Zh
@@ -94,17 +91,22 @@ jobs:
         run: sh scripts/check-build.sh bd-screen
 
   build-chinese:
-    name: Build Chinese release PDFs
+    name: Build Chinese release PDFs (${{ matrix.target }})
     if: >-
       github.event_name != 'push' ||
       github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
     runs-on: ubuntu-latest
+    # screen 与 print 并行编译（各占一个 runner），各自缓存辅助文件
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [screen, print]
     steps:
       - name: Check out B&D driver
         uses: actions/checkout@v7
         with:
           path: boxes-and-diamonds-zh
-          fetch-depth: 0
+          fetch-depth: 1
       - name: Check out matching OpenLogic-Zh fork
         uses: actions/checkout@v7
         with:
@@ -116,32 +118,23 @@ jobs:
         run: sh scripts/fetch-portraits.sh
       - name: Install poppler-utils for PDF text check
         run: sudo apt-get update && sudo apt-get install -y poppler-utils
-      - name: Fetch tags for version stamp
-        working-directory: boxes-and-diamonds-zh
-        run: git fetch --tags --force origin
       - name: Stamp OpenLogic-Zh revision into olprevision.tex
         working-directory: boxes-and-diamonds-zh
         run: sh scripts/stamp-olprevision.sh ../OpenLogic-Zh
-      - name: Compile Chinese PDFs
+      - name: Compile Chinese PDF
         uses: xu-cheng/latex-action@4.1.0
         with:
-          root_file: |
-            zh-bd-screen.tex
-            zh-bd-print.tex
+          root_file: zh-bd-${{ matrix.target }}.tex
           working_directory: boxes-and-diamonds-zh
           args: -xelatex -interaction=nonstopmode -halt-on-error
       - name: Check Chinese output
         working-directory: boxes-and-diamonds-zh
-        run: |
-          sh scripts/check-build.sh zh-bd-screen
-          sh scripts/check-build.sh zh-bd-print
-      - name: Upload Chinese PDFs
+        run: sh scripts/check-build.sh zh-bd-${{ matrix.target }}
+      - name: Upload Chinese PDF
         uses: actions/upload-artifact@v7
         with:
-          name: boxes-and-diamonds-zh
-          path: |
-            boxes-and-diamonds-zh/zh-bd-screen.pdf
-            boxes-and-diamonds-zh/zh-bd-print.pdf
+          name: boxes-and-diamonds-zh-${{ matrix.target }}
+          path: boxes-and-diamonds-zh/zh-bd-${{ matrix.target }}.pdf
       # 翻译同步提交：OLP 更新触发的 dispatch 构建成功后，把 stamp 过的
       # olprevision.tex（记录实际 OLP 修订）作为 fix: 提交推回 master，
       # 让 release-please 自动开出下一个版本（0.0.x）的 release PR。
@@ -198,7 +191,8 @@ jobs:
         if: ${{ steps.release.outputs.release_created }}
         uses: actions/download-artifact@v8
         with:
-          name: boxes-and-diamonds-zh
+          pattern: boxes-and-diamonds-zh-*
+          merge-multiple: true
           path: release-assets
       - name: Attach Chinese PDFs to release
         if: ${{ steps.release.outputs.release_created }}
