@@ -1,7 +1,8 @@
 #!/bin/sh
-# Stamp olprevision.tex with the actually-checked-out OpenLogic-Zh
-# revision, so every built PDF records which upstream revision its
-# Chinese translation corresponds to.
+# Stamp olprevision.tex (OpenLogic-Zh revision) and bdversion.tex
+# (boxes-and-diamonds-zh release version from the latest tag), so
+# every built PDF records which translation revision and which
+# release version it corresponds to.
 #
 # Usage: sh scripts/stamp-olprevision.sh [OLP_DIR]
 #   OLP_DIR defaults to ../OpenLogic-Zh (sibling checkout).
@@ -21,3 +22,9 @@ rev=$(git -C "$olp_dir" rev-parse --short HEAD)
 date=$(git -C "$olp_dir" log -1 --format=%cs)
 printf '%% Keep the shared revision value ASCII-safe for both pdfLaTeX and XeLaTeX.\n\\setOLPrevision{%s (%s)}%%\n' "$rev" "$date" > "$root_dir/olprevision.tex"
 echo "olprevision.tex: $rev ($date)"
+
+# 版本号取自最近 tag（v0.0.1 -> 0.0.1）；无 tag 时为 dev。
+ver=$(git -C "$root_dir" describe --tags --abbrev=0 2>/dev/null | sed 's/^v//' || true)
+ver=${ver:-dev}
+printf '%% Keep the version value ASCII-safe for both pdfLaTeX and XeLaTeX.\n\\setOLBdversion{%s}%%\n' "$ver" > "$root_dir/bdversion.tex"
+echo "bdversion.tex: $ver"
