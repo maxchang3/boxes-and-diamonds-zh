@@ -37,6 +37,8 @@ jobs:
       - name: Fetch cover portraits
         working-directory: boxes-and-diamonds-zh
         run: sh scripts/fetch-portraits.sh
+      - name: Install poppler-utils for PDF text check
+        run: sudo apt-get update && sudo apt-get install -y poppler-utils
       - name: Compile English screen PDF
         uses: xu-cheng/latex-action@v4
         with:
@@ -64,6 +66,8 @@ jobs:
       - name: Fetch cover portraits
         working-directory: boxes-and-diamonds-zh
         run: sh scripts/fetch-portraits.sh
+      - name: Install poppler-utils for PDF text check
+        run: sudo apt-get update && sudo apt-get install -y poppler-utils
       - name: Compile Chinese PDFs
         uses: xu-cheng/latex-action@v4
         with:
