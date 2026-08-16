@@ -144,12 +144,12 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if git diff --quiet olprevision.tex; then
-            echo "olprevision.tex unchanged; no sync commit needed"
+          if git diff --quiet olprevision.tex && git diff --quiet bdversion.tex; then
+            echo "olprevision.tex/bdversion.tex unchanged; no sync commit needed"
             exit 0
           fi
           rev=$(sed -n 's/.*{\([0-9a-f]*\) (.*/\1/p' olprevision.tex)
-          git add olprevision.tex
+          git add olprevision.tex bdversion.tex
           git commit -m "fix: sync translation with openlogic-zh@$rev"
           git pull --rebase origin master
           git push origin master
