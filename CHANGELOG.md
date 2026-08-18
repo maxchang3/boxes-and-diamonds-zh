@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.3](https://github.com/maxchang3/boxes-and-diamonds-zh/compare/v0.1.2...v0.1.3) (2026-08-18)
+
+
+### Bug Fixes
+
+* sync translation with openlogic-zh@6373fbe ([36b3bc0](https://github.com/maxchang3/boxes-and-diamonds-zh/commit/36b3bc0c7248f87c77d70555328f5ce78c2b5486))
+
 ## [0.1.2](https://github.com/maxchang3/boxes-and-diamonds-zh/compare/v0.1.1...v0.1.2) (2026-08-17)
 
 
