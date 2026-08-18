@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.1.4](https://github.com/maxchang3/boxes-and-diamonds-zh/compare/v0.1.3...v0.1.4) (2026-08-18)
+
+
+### Bug Fixes
+
+* sync translation with openlogic-zh@ba75671 ([31bc524](https://github.com/maxchang3/boxes-and-diamonds-zh/commit/31bc524a29b4bf08fe36d28fb438628e79ada081))
+* sync translation with openlogic-zh@c30b0ed ([463761a](https://github.com/maxchang3/boxes-and-diamonds-zh/commit/463761acfdb8909cc5be7bfc6f0972edb06400ad))
+* sync translation with openlogic-zh@d04a01e ([d2694c7](https://github.com/maxchang3/boxes-and-diamonds-zh/commit/d2694c7fb3bdd39ecab41d9312cb9882741abf87))
+* sync translation with openlogic-zh@d92c7fe ([32335f3](https://github.com/maxchang3/boxes-and-diamonds-zh/commit/32335f3211d5ebd555e96759238eac6a95dd9dfc))
+* sync translation with openlogic-zh@fa4bf6c ([550bf6e](https://github.com/maxchang3/boxes-and-diamonds-zh/commit/550bf6e99f13a7d02d78dd7aef57157bc52836f6))
+
 ## [0.1.3](https://github.com/maxchang3/boxes-and-diamonds-zh/compare/v0.1.2...v0.1.3) (2026-08-18)
 
 
