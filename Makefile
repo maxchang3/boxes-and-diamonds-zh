@@ -13,7 +13,6 @@ all: screen print cover
 zh: zh-bd-screen.pdf
 	@sh scripts/check-build.sh zh-bd-screen
 
-# 每次构建前把实际 OpenLogic-Zh 修订写入 olprevision.tex（PDF 扉页可见）
 zh-bd-screen.pdf zh-bd-print.pdf bd-screen.pdf: | olprevision
 
 olprevision: FORCE
@@ -46,9 +45,6 @@ portraits:
 bd-print-cover.pdf: bd-print-cover.tex FORCE
 	$(LATEXMK) $(LATEXMKFLAGS) -pdf $<
 
-# Build both variants and perform deterministic text/log checks.  The checks
-# intentionally ignore known font/layout warnings; TeX errors and missing
-# localized output remain failures.
 check: zh zh-print screen
 
 clean:
