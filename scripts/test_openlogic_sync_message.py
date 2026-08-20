@@ -113,13 +113,21 @@ class SyncMessageTests(unittest.TestCase):
             internal,
             self.fixture.fls("locale/zh/content/used.tex", forms=True),
         )
-        self.assertIn("OpenLogic-Range:", output)
-        self.assertIn(f"fix(translation): clarify the used section", output)
-        self.assertIn(f"feat(translation)!: expand the used section", output)
-        self.assertIn(f"OpenLogic-Commit: {first}", output)
-        self.assertIn(f"OpenLogic-Commit: {second}", output)
+        blocks = output.rstrip().split("\n\n")
+        self.assertEqual(
+            blocks,
+            [
+                f"chore(sync): advance OpenLogic-Zh to {internal[:12]}",
+                f"OpenLogic-Range: {self.fixture.old}..{internal}\n"
+                "OpenLogic-Source: OpenLogic-Zh",
+                "fix(translation): clarify the used section",
+                f"OpenLogic-Commit: {first}",
+                "feat(translation)!: expand the used section",
+                f"OpenLogic-Commit: {second}\n"
+                "BREAKING CHANGE: the section now has a new structure",
+            ],
+        )
         self.assertNotIn(f"OpenLogic-Commit: {internal}", output)
-        self.assertIn("BREAKING CHANGE: the section now has a new structure", output)
 
     def test_internal_only_range_is_chore(self):
         self.fixture.write("README.md", "internal\n")

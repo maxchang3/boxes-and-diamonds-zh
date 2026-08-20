@@ -209,33 +209,24 @@ def build_message(repo, old_revision, new_revision, fls_paths, source_name="Open
         )
     source_name = clean_text(source_name, 80) or "OpenLogic-Zh"
     short_new = new[:12]
+    lines = [
+        f"chore(sync): advance {source_name} to {short_new}",
+        "",
+        f"OpenLogic-Range: {old}..{new}",
+        f"OpenLogic-Source: {source_name}",
+    ]
     if not net_paths:
-        lines = [
-            f"chore(sync): advance {source_name} to {short_new}",
-            "",
-            f"OpenLogic-Range: {old}..{new}",
-            f"OpenLogic-Source: {source_name}",
-        ]
         return "\n".join(lines) + "\n"
     selected = relevant_commits(repo, old, new, net_paths)
     if not selected:
         raise SyncMessageError("net OpenLogic input changes have no attributable commit")
-    lines = []
-    for index, (commit, paths) in enumerate(selected):
+    for commit, paths in selected:
         details = commit_details(repo, commit, paths)
         marker = "!" if details["breaking"] else ""
         title = f"{details['type']}({details['scope']}){marker}: {details['description']}"
-        if index == 0:
-            lines.extend([title, ""])
-            lines.append(f"OpenLogic-Range: {old}..{new}")
-            lines.append(f"OpenLogic-Source: {source_name}")
-            lines.append(f"OpenLogic-Commit: {commit}")
-            for reason in details["footers"]:
-                lines.append(f"BREAKING CHANGE: {reason}")
-        else:
-            lines.extend(["", title, f"  OpenLogic-Commit: {commit}"])
-            for reason in details["footers"]:
-                lines.append(f"  BREAKING CHANGE: {reason}")
+        lines.extend(["", title, "", f"OpenLogic-Commit: {commit}"])
+        for reason in details["footers"]:
+            lines.append(f"BREAKING CHANGE: {reason}")
     return "\n".join(lines) + "\n"
 
 
