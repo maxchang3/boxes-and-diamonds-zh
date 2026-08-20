@@ -4,8 +4,6 @@ on:
   push:
   pull_request:
   workflow_dispatch:
-  repository_dispatch:
-    types: [olp-updated]
     inputs:
       olp_repository:
         description: 'Repository containing the matching OpenLogic-Zh fork (OWNER/REPO)'
@@ -16,28 +14,63 @@ on:
         required: false
         default: main
         type: string
+  repository_dispatch:
+    types: [olp-updated]
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: true
 
 env:
-  OLP_REPOSITORY: ${{ inputs.olp_repository || vars.OLP_REPOSITORY || format('{0}/OpenLogic-Zh', github.repository_owner) }}
-  OLP_REF: ${{ inputs.olp_ref || vars.OLP_REF || 'main' }}
+  OLP_REPOSITORY: ${{ inputs.olp_repository || github.event.client_payload.olp_repository || vars.OLP_REPOSITORY || format('{0}/OpenLogic-Zh', github.repository_owner) }}
+  OLP_REF: ${{ inputs.olp_ref || github.event.client_payload.olp_ref || vars.OLP_REF || 'main' }}
 
-# 只有默认分支的 push 才需要构建；PR 与手动触发总是构建。
-# workflow 级 on.push 无法写分支表达式（$default-branch 有已知 bug），
-# 故在 job 级用 default_branch 判断。
 jobs:
+  resolve:
+    name: Pin source revisions
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      bnd_sha: ${{ steps.revisions.outputs.bnd_sha }}
+      olp_sha: ${{ steps.revisions.outputs.olp_sha }}
+    steps:
+      - name: Check out B&D source
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'repository_dispatch' && format('refs/heads/{0}', github.event.repository.default_branch) || github.sha }}
+          path: boxes-and-diamonds-zh
+          fetch-depth: 0
+      - name: Check out OpenLogic source
+        uses: actions/checkout@v7
+        with:
+          repository: ${{ env.OLP_REPOSITORY }}
+          ref: ${{ env.OLP_REF }}
+          path: OpenLogic-Zh
+          fetch-depth: 0
+      - name: Test sync message generator
+        working-directory: boxes-and-diamonds-zh
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: python3 -m unittest scripts/test_openlogic_sync_message.py
+      - name: Record exact revisions
+        id: revisions
+        run: |
+          printf 'bnd_sha=%s\n' "$(git -C boxes-and-diamonds-zh rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          printf 'olp_sha=%s\n' "$(git -C OpenLogic-Zh rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
   changes:
     name: Detect shared-layer changes
+    needs: resolve
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     outputs:
       shared: ${{ steps.filter.outputs.shared }}
     steps:
       - uses: actions/checkout@v7
-      # repository_dispatch（openlogic-zh 翻译更新触发）只重建中文 PDF，
-      # 不检测共享层变化，也就跳过英文回归构建。
+        with:
+          ref: ${{ needs.resolve.outputs.bnd_sha }}
       - uses: dorny/paths-filter@v4
         id: filter
         if: github.event_name != 'repository_dispatch'
@@ -54,30 +87,33 @@ jobs:
 
   build-english:
     name: Build English comparison
-    needs: changes
+    needs: [changes, resolve]
     if: >-
       needs.changes.outputs.shared == 'true' &&
       (github.event_name != 'push' ||
        github.ref == format('refs/heads/{0}', github.event.repository.default_branch))
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
-      - name: Check out B&D driver
+      - name: Check out B&D source
         uses: actions/checkout@v7
         with:
+          ref: ${{ needs.resolve.outputs.bnd_sha }}
           path: boxes-and-diamonds-zh
           fetch-depth: 1
       - name: Check out matching Open Logic fork
         uses: actions/checkout@v7
         with:
           repository: ${{ env.OLP_REPOSITORY }}
-          ref: ${{ env.OLP_REF }}
+          ref: ${{ needs.resolve.outputs.olp_sha }}
           path: OpenLogic-Zh
       - name: Fetch cover portraits
         working-directory: boxes-and-diamonds-zh
         run: sh scripts/fetch-portraits.sh
       - name: Install poppler-utils for PDF text check
         run: sudo apt-get update && sudo apt-get install -y poppler-utils
-      - name: Stamp OpenLogic-Zh revision into olprevision.tex
+      - name: Generate build metadata
         working-directory: boxes-and-diamonds-zh
         run: sh scripts/stamp-olprevision.sh ../OpenLogic-Zh
       - name: Compile English screen PDF
@@ -92,33 +128,37 @@ jobs:
 
   build-chinese:
     name: Build Chinese release PDFs (${{ matrix.target }})
+    needs: resolve
     if: >-
-      github.event_name != 'push' ||
-      github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+      needs.resolve.result == 'success' &&
+      (github.event_name != 'push' ||
+       github.ref == format('refs/heads/{0}', github.event.repository.default_branch))
     runs-on: ubuntu-latest
-    # screen 与 print 并行编译（各占一个 runner），各自缓存辅助文件
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       matrix:
         target: [screen, print]
     steps:
-      - name: Check out B&D driver
+      - name: Check out B&D source
         uses: actions/checkout@v7
         with:
+          ref: ${{ needs.resolve.outputs.bnd_sha }}
           path: boxes-and-diamonds-zh
           fetch-depth: 1
-      - name: Check out matching OpenLogic-Zh fork
+      - name: Check out matching Open Logic fork
         uses: actions/checkout@v7
         with:
           repository: ${{ env.OLP_REPOSITORY }}
-          ref: ${{ env.OLP_REF }}
+          ref: ${{ needs.resolve.outputs.olp_sha }}
           path: OpenLogic-Zh
       - name: Fetch cover portraits
         working-directory: boxes-and-diamonds-zh
         run: sh scripts/fetch-portraits.sh
       - name: Install poppler-utils for PDF text check
         run: sudo apt-get update && sudo apt-get install -y poppler-utils
-      - name: Stamp OpenLogic-Zh revision into olprevision.tex
+      - name: Generate build metadata
         working-directory: boxes-and-diamonds-zh
         run: sh scripts/stamp-olprevision.sh ../OpenLogic-Zh
       - name: Compile Chinese PDF
@@ -130,41 +170,93 @@ jobs:
       - name: Check Chinese output
         working-directory: boxes-and-diamonds-zh
         run: sh scripts/check-build.sh zh-bd-${{ matrix.target }}
-      - name: Upload Chinese PDF
+      - name: Upload Chinese PDF and dependency data
         uses: actions/upload-artifact@v7
         with:
           name: boxes-and-diamonds-zh-${{ matrix.target }}
-          path: boxes-and-diamonds-zh/zh-bd-${{ matrix.target }}.pdf
-      # 翻译同步提交：OLP 更新触发的 dispatch 构建成功后，把 stamp 过的
-      # olprevision.tex（记录实际 OLP 修订）作为 fix: 提交推回 master，
-      # 让 release-please 自动开出下一个版本（0.0.x）的 release PR。
-      # 若 OLP 无新修订（diff 为空）则跳过，避免循环触发。
-      - name: Commit synced translation revision
-        if: github.event_name == 'repository_dispatch'
+          path: |
+            boxes-and-diamonds-zh/zh-bd-${{ matrix.target }}.pdf
+            boxes-and-diamonds-zh/zh-bd-${{ matrix.target }}.fls
+
+  sync:
+    name: Sync OpenLogic revision
+    needs: [resolve, build-chinese]
+    if: >-
+      github.event_name == 'repository_dispatch' &&
+      needs.resolve.result == 'success' &&
+      needs.build-chinese.result == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out pinned B&D source
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.resolve.outputs.bnd_sha }}
+          path: boxes-and-diamonds-zh
+          fetch-depth: 0
+      - name: Check out pinned OpenLogic source
+        uses: actions/checkout@v7
+        with:
+          repository: ${{ env.OLP_REPOSITORY }}
+          ref: ${{ needs.resolve.outputs.olp_sha }}
+          path: OpenLogic-Zh
+          fetch-depth: 0
+      - name: Download build dependency data
+        uses: actions/download-artifact@v8
+        with:
+          pattern: boxes-and-diamonds-zh-*
+          path: build-inputs
+          merge-multiple: true
+      - name: Verify default branch is still pinned
         working-directory: boxes-and-diamonds-zh
+        env:
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+          PINNED_BND_SHA: ${{ needs.resolve.outputs.bnd_sha }}
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if git diff --quiet olprevision.tex && git diff --quiet bdversion.tex; then
-            echo "olprevision.tex/bdversion.tex unchanged; no sync commit needed"
+          git fetch --no-tags origin "refs/heads/${DEFAULT_BRANCH}:refs/remotes/origin/${DEFAULT_BRANCH}"
+          current=$(git rev-parse "refs/remotes/origin/${DEFAULT_BRANCH}")
+          if [ "$current" != "$PINNED_BND_SHA" ]; then
+            echo "default branch advanced during build; refusing to sync" >&2
+            exit 1
+          fi
+      - name: Generate semantic sync message
+        working-directory: boxes-and-diamonds-zh
+        env:
+          OLP_REPOSITORY: ${{ env.OLP_REPOSITORY }}
+          OLP_SHA: ${{ needs.resolve.outputs.olp_sha }}
+        run: |
+          python3 scripts/openlogic-sync-message.py \
+            --repo ../OpenLogic-Zh \
+            --revision-file olprevision.tex \
+            --new-revision "$OLP_SHA" \
+            --fls ../build-inputs/zh-bd-screen.fls ../build-inputs/zh-bd-print.fls \
+            --source-repo-name "$OLP_REPOSITORY" \
+            --output "$RUNNER_TEMP/openlogic-sync-message"
+      - name: Stamp and commit synchronized revision
+        working-directory: boxes-and-diamonds-zh
+        env:
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          sh scripts/stamp-olprevision.sh ../OpenLogic-Zh
+          if git diff --quiet -- olprevision.tex bdversion.tex; then
             exit 0
           fi
-          rev=$(sed -n 's/.*{\([0-9a-f]*\) (.*/\1/p' olprevision.tex)
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add olprevision.tex bdversion.tex
-          git commit -m "fix: sync translation with openlogic-zh@$rev"
-          git pull --rebase origin master
-          git push origin master
+          git commit --file "$RUNNER_TEMP/openlogic-sync-message"
+          git push origin "HEAD:$DEFAULT_BRANCH"
 
   release-please:
     name: Prepare or publish release
-    # push（发版或常规提交）与 repository_dispatch（OLP 翻译同步，
-    # sync commit 已在 build-chinese 里推回 master）都触发。
-    # 无新提交时 release-please 自动跳过。
     if: >-
+      always() &&
+      needs.build-chinese.result == 'success' &&
+      (needs.sync.result == 'success' || needs.sync.result == 'skipped') &&
       (github.event_name == 'push' || github.event_name == 'repository_dispatch') &&
       github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
-    needs:
-      - build-chinese
+    needs: [build-chinese, sync]
     runs-on: ubuntu-latest
     permissions:
       actions: read
@@ -172,12 +264,6 @@ jobs:
       issues: write
       pull-requests: write
     steps:
-      - uses: actions/checkout@v7
-      # dispatch 时 sync commit 刚由 build-chinese 推回 master，
-      # 重新拉取以确保 release-please 看到最新提交
-      - name: Fetch latest master
-        if: github.event_name == 'repository_dispatch'
-        run: git fetch origin master && git reset --hard origin/master
       - name: Run release-please
         id: release
         uses: googleapis/release-please-action@v5
@@ -187,12 +273,17 @@ jobs:
           target-branch: ${{ github.event.repository.default_branch }}
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
-      - name: Download Chinese PDFs
+      - name: Download screen PDF
         if: ${{ steps.release.outputs.release_created }}
         uses: actions/download-artifact@v8
         with:
-          pattern: boxes-and-diamonds-zh-*
-          merge-multiple: true
+          name: boxes-and-diamonds-zh-screen
+          path: release-assets
+      - name: Download print PDF
+        if: ${{ steps.release.outputs.release_created }}
+        uses: actions/download-artifact@v8
+        with:
+          name: boxes-and-diamonds-zh-print
           path: release-assets
       - name: Attach Chinese PDFs to release
         if: ${{ steps.release.outputs.release_created }}
