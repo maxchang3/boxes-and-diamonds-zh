@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.2.0](https://github.com/maxchang3/boxes-and-diamonds-zh/compare/v0.1.4...v0.2.0) (2026-08-20)
+
+
+### Features
+
+* **release:** derive sync notes from built OpenLogic inputs ([9abbd11](https://github.com/maxchang3/boxes-and-diamonds-zh/commit/9abbd11940546951d85b8ec92a94474daa7294ba))
+
+
+### Bug Fixes
+
+* sync translation with openlogic-zh@30b7a2d ([a384898](https://github.com/maxchang3/boxes-and-diamonds-zh/commit/a3848987c56da47a347d86330d392b8353085ea8))
+* sync translation with openlogic-zh@dd6eea8 ([ebf29e0](https://github.com/maxchang3/boxes-and-diamonds-zh/commit/ebf29e07c99dbe04da9a086e9e9f462e83dbfbee))
+* sync translation with openlogic-zh@f933366 ([d1185fb](https://github.com/maxchang3/boxes-and-diamonds-zh/commit/d1185fb74d146fb9daf87548974b574eef2729bc))
+* **translation:** restore source-aligned token usage ([2cba4f3](https://github.com/maxchang3/boxes-and-diamonds-zh/commit/2cba4f3718648749bfffc298a49a490f4ef3aefa))
+
 ## [0.1.4](https://github.com/maxchang3/boxes-and-diamonds-zh/compare/v0.1.3...v0.1.4) (2026-08-18)
 
 
