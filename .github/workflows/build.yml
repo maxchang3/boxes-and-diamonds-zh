@@ -293,4 +293,5 @@ jobs:
           gh release upload "${{ steps.release.outputs.tag_name }}"
           release-assets/zh-bd-screen.pdf
           release-assets/zh-bd-print.pdf
+          --repo "$GITHUB_REPOSITORY"
           --clobber
