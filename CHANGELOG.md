@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.1](https://github.com/maxchang3/boxes-and-diamonds-zh/compare/v0.2.0...v0.2.1) (2026-08-21)
+
+
+### Bug Fixes
+
+* **release:** target repository for asset uploads ([0a4e908](https://github.com/maxchang3/boxes-and-diamonds-zh/commit/0a4e9084d936761cc60f075581d741deac435dd7))
+* **translation:** remove first-person phrasing from definitions ([812e776](https://github.com/maxchang3/boxes-and-diamonds-zh/commit/812e776355a050b3432237f019669a3e60f02b2b))
+
 ## [0.2.0](https://github.com/maxchang3/boxes-and-diamonds-zh/compare/v0.1.4...v0.2.0) (2026-08-20)
 
 
