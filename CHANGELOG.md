@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.2](https://github.com/maxchang3/boxes-and-diamonds-zh/compare/v0.2.1...v0.2.2) (2026-08-21)
+
+
+### Bug Fixes
+
+* **translation:** improve formatting of BHK explanation section ([199ed64](https://github.com/maxchang3/boxes-and-diamonds-zh/commit/199ed6451117252ac4b0239243209f875ebc2984))
+
 ## [0.2.1](https://github.com/maxchang3/boxes-and-diamonds-zh/compare/v0.2.0...v0.2.1) (2026-08-21)
 
 
