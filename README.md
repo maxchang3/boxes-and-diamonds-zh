@@ -4,7 +4,7 @@
 >  
 > **当前译文由 AI 初步生成，仍在持续润色中。**
 > - 初始翻译：使用 DeepSeek V4 Flash 0731 Max (DeepSeek Harness)
-> - 翻译润色：使用 GPT 5.6 Sol High (Codex)、GPT 5.6 Sol Pro(ChatGPT)，并辅以人工校对
+> - 翻译润色：使用 GPT 5.6 Sol High (Codex)、GPT 5.6 Sol Pro (ChatGPT)，并辅以人工校对
 >
 > 正文译文维护在 [OpenLogic-Zh](https://github.com/maxchang3/OpenLogic-Zh) 的 `locale/zh/` 中；本书专属的前言、导论与外壳文字维护在本仓库。
 
