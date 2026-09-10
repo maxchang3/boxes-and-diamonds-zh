@@ -119,4 +119,10 @@
 
 %\bibliography{\olpath/bib/open-logic.bib}
 
-\olimport*{\olpath/content/open-logic-about}
+% 关于页是单文件而非模块，\olimport* 无可选路径时不会切到 locale 层，
+% 显式取译文，避免中文版混入英文 About 页。
+\ifdefined\ollangid
+  \input{\olpath/locale/\ollangid/content/open-logic-about}
+\else
+  \olimport*{\olpath/content/open-logic-about}
+\fi
