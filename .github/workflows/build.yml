@@ -66,7 +66,7 @@ jobs:
     permissions:
       contents: read
     outputs:
-      shared: ${{ steps.filter.outputs.shared }}
+      shared: ${{ github.event_name == 'repository_dispatch' || steps.filter.outputs.shared == 'true' }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -170,6 +170,15 @@ jobs:
       - name: Check Chinese output
         working-directory: boxes-and-diamonds-zh
         run: sh scripts/check-build.sh zh-bd-${{ matrix.target }}
+      - name: Check consumer closure
+        if: matrix.target == 'screen'
+        working-directory: boxes-and-diamonds-zh
+        run: |
+          python3 ../OpenLogic-Zh/scripts/check-consumer-closure.py \
+            --consumer boxes-and-diamonds-zh \
+            --fls zh-bd-screen.fls \
+            --driver zh-bd-screen.tex \
+            --tag-config bd-config.sty
       - name: Upload Chinese PDF and dependency data
         uses: actions/upload-artifact@v7
         with:

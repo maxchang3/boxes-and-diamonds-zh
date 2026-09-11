@@ -45,7 +45,7 @@ portraits:
 bd-print-cover.pdf: bd-print-cover.tex FORCE
 	$(LATEXMK) $(LATEXMKFLAGS) -pdf $<
 
-check: zh zh-print screen
+check: zh zh-print screen check-closure
 
 check-closure: zh-bd-screen.pdf
 	python3 ../OpenLogic-Zh/scripts/check-consumer-closure.py \
