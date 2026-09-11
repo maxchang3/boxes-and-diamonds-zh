@@ -4,7 +4,7 @@
 LATEXMK ?= latexmk
 LATEXMKFLAGS ?= -interaction=nonstopmode -halt-on-error -g
 
-.PHONY: all zh zh-print screen print cover portraits check clean FORCE
+.PHONY: all zh zh-print screen print cover portraits check check-closure clean FORCE
 
 # Preserve the upstream default: English screen/print outputs and cover.
 # The localized edition remains an explicit `make zh` target.
@@ -46,6 +46,11 @@ bd-print-cover.pdf: bd-print-cover.tex FORCE
 	$(LATEXMK) $(LATEXMKFLAGS) -pdf $<
 
 check: zh zh-print screen
+
+check-closure: zh-bd-screen.pdf
+	python3 ../OpenLogic-Zh/scripts/check-consumer-closure.py \
+		--consumer boxes-and-diamonds-zh --fls zh-bd-screen.fls \
+		--driver zh-bd-screen.tex --tag-config bd-config.sty
 
 clean:
 	$(LATEXMK) -C

@@ -41,6 +41,7 @@ cd boxes-and-diamonds-zh
 make zh         # 中文屏幕版：zh-bd-screen.pdf
 make zh-print   # 中文印刷内页：zh-bd-print.pdf
 make check      # 中文两版 + 英文回归测试
+make check-closure # 比较中文 screen 的实际正文依赖与共享 consumer 清单
 make screen     # 仅本地测试用的英文屏幕版：bd-screen.pdf
 make print      # 仅本地测试用的英文印刷内页：bd-print.pdf
 make cover      # 上游英文印刷封面
@@ -48,6 +49,8 @@ make clean
 ```
 
 `make zh` 和 `make zh-print` 使用 XeLaTeX，`make screen` 和 `make print` 使用 pdfLaTeX。日志中可能出现继承自上游的字体替代、overfull、PDF 资产和 hyperref 警告；TeX 错误、未定义 token、缺少输出或正文语言错误会使检查失败。
+
+`make check-closure` 读取 `zh-bd-screen.fls` 并与 OpenLogic-Zh 中的 B&D consumer 清单比较；上游驱动或 tag 配置变化后按检查命令增加 `--write` 刷新清单及其来源修订。
 
 ## 同步上游
 
