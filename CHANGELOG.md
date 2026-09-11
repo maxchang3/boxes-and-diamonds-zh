@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.2.3](https://github.com/maxchang3/boxes-and-diamonds-zh/compare/v0.2.2...v0.2.3) (2026-09-11)
+
+
+### Bug Fixes
+
+* **ci:** enforce closure checks on dispatched builds ([4e8b5b6](https://github.com/maxchang3/boxes-and-diamonds-zh/commit/4e8b5b66c1e1ba0a798163cd6c52a561b554c498))
+* **translation:** update ([1e26d05](https://github.com/maxchang3/boxes-and-diamonds-zh/commit/1e26d05062489bfe37f3be176f37aae6cc989edc))
+* **zh:** load the localized About page ([635e71d](https://github.com/maxchang3/boxes-and-diamonds-zh/commit/635e71d317826342e4450a67ff590fabf844891b))
+
 ## [0.2.2](https://github.com/maxchang3/boxes-and-diamonds-zh/compare/v0.2.1...v0.2.2) (2026-09-04)
 
 
